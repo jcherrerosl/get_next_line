@@ -6,44 +6,81 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/06 21:58:54 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/07 21:47:39 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_free(char *s)
+int	check_n(char *s, char c)
 {
-	free(s);
-	s = NULL;
-	return (NULL);
-}
-
-static char	*ft_read_overline(int fd, char *s)
-{
-	char	*overline;
-	int		i;
+	int	i;
 
 	i = 0;
-	overline = NULL;
-	while (i < BUFFER_SIZE)
+	while (s[i])
 	{
-		if (overline[i] != '\n')
-			overline = ft_strjoin(overline, s);
+		if (s[i] == c)
+			return (1);
 		i++;
 	}
-	return (overline);
+	return (0);
 }
 
-char	*ft_trimmer(char *s)
+int	ft_free(char *s)
 {
-	int		i;
-
+	
 }
 
-char	*get_next_line(int fd)
+char	*get_overline(int fd)
+{
+	char	*buf;
+	size_t	bytes;
+	char	*joined;
+	char	*tmp_buf;
+
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (NULL);
+	bytes = read(fd, buf, BUFFER_SIZE);
+	if (bytes < 0)
+	{
+		free(buf);
+		return (NULL);
+	}
+	buf[bytes] = '\0';
+	while (check_n(buf, '\n') == 0)
+	{
+		tmp_buf = ft_strdup(buf);
+		if (!tmp_buf)
+		{
+			free(buf);
+			return (NULL);
+		}
+			joined = ft_strjoin(tmp_buf, buf);
+			free(buf);
+			return (joined);
+		}
+	}
+	return (buf);
+}
+#include <stdio.h>
+
+int	main(void)
+{
+	char	*s;
+	int		fd;
+
+	fd = open("text.txt", O_RDONLY);
+	s = get_overline(fd);
+	printf("%s\n", s);
+	close(fd);
+	return (0);
+}
+
+/*char	*get_next_line(int fd)
 {
 	char		*buf;
+	char		*line;
 	static char	*remainder;
 	int			bytes;
 
@@ -54,9 +91,29 @@ char	*get_next_line(int fd)
 	if (!buf)
 		return (NULL);
 	bytes = read(fd, buf, BUFFER_SIZE);
-	if (bytes < 0)
+	if (bytes <= 0)
 	{
 		free(buf);
-		ft_free(line);
+		free(line);
+		return (NULL);
 	}
+	else
+	{
+		buf[bytes] = '\0';
+		if (remainder)
+		{
+			line = ft_strjoin(remainder, buf);
+			free(buf);
+			free(remainder);
+			remainder = NULL;
+		}
+		else
+			line = buf;
+		while (line[bytes - 1] == '\n')
+			line[--bytes] = '\0';
+		remainder = ft_strjoin(line, buf + bytes);
+		free(buf);
+	}
+	return (line);
 }
+*/
