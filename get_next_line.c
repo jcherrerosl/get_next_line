@@ -6,7 +6,7 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/08 16:27:24 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/08 22:42:21 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,24 +38,25 @@ char	*get_overline(int fd)
 	char	*buf;
 	size_t	bytes;
 	char	*joined;
-	//char	*tmp_buf;
 
-	joined = NULL;
+	bytes = 1;
+	joined = "";
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
-		return (NULL);
-	while (1)
+		ft_free(buf);
+	buf[0] = '\0';
+	while (bytes > 0 && check_n(buf, '\n') == 0)
 	{
 		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes <= 0)
-			ft_free(joined);
-		buf[bytes] = '\0';
-		joined = ft_strjoin(joined, buf);
-		if (!joined)
-			return (NULL);
-		if (check_n(buf, '\n') == 1 || bytes < BUFFER_SIZE)
-			break ;
+		if (bytes > 0)
+		{
+			buf[bytes] = '\0';
+			joined = ft_strjoin(joined, buf);
+		}
 	}
+	free(buf);
+	if (bytes < 0)
+		ft_free(buf);
 	return (joined);
 }
 
