@@ -6,7 +6,7 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:26:07 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/07 21:26:03 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/08 16:07:53 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ size_t	ft_strlen(char *s)
 	size_t	i;
 
 	i = 0;
+	if(!s)
+		return (i);
 	while (s[i] != '\0')
 		i++;
 	return (i);
@@ -44,7 +46,7 @@ char	*ft_strdup(const char *s)
 	int		i;
 
 	i = 0;
-	dup = (char *)malloc(sizeof(char) * (ft_strlen(s) + 1));
+	dup = (char *)malloc(sizeof(char) * (ft_strlen((char *)s) + 1));
 	if (!dup)
 		return (NULL);
 	while (s[i] != '\0')

@@ -1,11 +1,4 @@
-Primera línea
-Segunda línea
-Tercera línea
-Cuarta línea
-Quinta línea
-Sexta línea
-Septima línea
-Octava línea
-Novena línea
-Décima línea
-Undécima línea
+hola
+que
+tal
+uwu

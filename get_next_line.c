@@ -6,11 +6,12 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/07 21:47:39 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/08 16:27:24 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 int	check_n(char *s, char c)
 {
@@ -26,9 +27,10 @@ int	check_n(char *s, char c)
 	return (0);
 }
 
-int	ft_free(char *s)
+void	*ft_free(char *s)
 {
-	
+	free(s);
+	return (NULL);
 }
 
 char	*get_overline(int fd)
@@ -36,33 +38,27 @@ char	*get_overline(int fd)
 	char	*buf;
 	size_t	bytes;
 	char	*joined;
-	char	*tmp_buf;
+	//char	*tmp_buf;
 
+	joined = NULL;
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		return (NULL);
-	bytes = read(fd, buf, BUFFER_SIZE);
-	if (bytes < 0)
+	while (1)
 	{
-		free(buf);
-		return (NULL);
-	}
-	buf[bytes] = '\0';
-	while (check_n(buf, '\n') == 0)
-	{
-		tmp_buf = ft_strdup(buf);
-		if (!tmp_buf)
-		{
-			free(buf);
+		bytes = read(fd, buf, BUFFER_SIZE);
+		if (bytes <= 0)
+			ft_free(joined);
+		buf[bytes] = '\0';
+		joined = ft_strjoin(joined, buf);
+		if (!joined)
 			return (NULL);
-		}
-			joined = ft_strjoin(tmp_buf, buf);
-			free(buf);
-			return (joined);
-		}
+		if (check_n(buf, '\n') == 1 || bytes < BUFFER_SIZE)
+			break ;
 	}
-	return (buf);
+	return (joined);
 }
+
 #include <stdio.h>
 
 int	main(void)
@@ -74,6 +70,7 @@ int	main(void)
 	s = get_overline(fd);
 	printf("%s\n", s);
 	close(fd);
+	// system("leaks -q a.out");
 	return (0);
 }
 
