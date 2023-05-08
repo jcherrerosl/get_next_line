@@ -6,7 +6,7 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/08 22:42:21 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/08 22:52:35 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ char	*get_overline(int fd)
 	size_t	bytes;
 	char	*joined;
 
-	bytes = 1;
-	joined = "";
+	joined = ""; //No funciona con NULL
+	bytes = 1;   // para que entre en el bucle
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		ft_free(buf);
@@ -54,9 +54,9 @@ char	*get_overline(int fd)
 			joined = ft_strjoin(joined, buf);
 		}
 	}
-	free(buf);
 	if (bytes < 0)
-		ft_free(buf);
+		ft_free(joined);
+	free(buf);
 	return (joined);
 }
 
