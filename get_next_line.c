@@ -6,7 +6,7 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/09 13:29:45 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/16 12:37:01 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,34 +32,14 @@ static void	*ft_free(char *s)
 	free(s);
 	return (NULL);
 }
-
-char	*ft_trimmer(char *s)
-{
-	static char	*remainder;
-	char		*line;
-	size_t		i;
-
-	i = 0;
-	if (ft_strlen(ft_strchr(s, '\n')) > 1)
-	{
-		remainder = ft_strchr(s, '\n') + 1;
-		while (i <= (ft_strlen(s) - ft_strlen(remainder)))
-		{
-			line[i] = s[i];
-			i++;
-		}
-		return (line);
-	}
-	return (s);
-}
-
 static char	*get_overline(int fd)
 {
-	char		*buf;
-	size_t		bytes;
-	static char	*joined;
+	char	*buf;
+	size_t	bytes;
+	char	*joined;
 
 	joined = "";
+	//joined = "";
 	bytes = 1;
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
@@ -82,33 +62,56 @@ static char	*get_overline(int fd)
 
 char	*get_next_line(int fd)
 {
+	static char	*remainder = NULL;
+	char		*s;
+	char		*line;
+	size_t		i;
+
+	if (!fd)
+		return (NULL);
+	s = get_overline(fd);
+	if (ft_strlen(remainder) > 0)
+		s = ft_strjoin(remainder, s);
+	i = 0;
+	remainder = ft_strchr(s, '\n') + 1;
+	line = (char *)malloc(sizeof(char) * (ft_strlen(s) - ft_strlen(remainder)));
+	if (ft_strlen(ft_strchr(s, '\n')) > 1)
+	{
+		while (i <= (ft_strlen(s) - ft_strlen(remainder)))
+		{
+			line[i] = s[i];
+			i++;
+		}
+		return (line);
+	}
+	return (s);
+}
+
+
+/*
+char	*get_next_line(int fd)
+{
 	char		*overline;
 	char		*line;
 	static char	*remainder;
+	char		*s;
+	int			fd;
 
 	remainder = "";
 	overline = get_overline(fd);
 	line = ft_trimmer(overline);
 	line = ft_strjoin(remainder, line);
-}
-
+}*/
 #include <stdio.h>
 #include <string.h>
 
 int	main(void)
 {
-	char	*s;
-	int		fd;
-
-	s = NULL;
-	fd = open("text.txt", O_RDONLY);
-	while ((s = get_overline(fd)))
+	int fd = open("text.txt", O_RDONLY);
+	//printf("%s", get_next_line(fd));
+	while (get_next_line(fd))
 	{
-		printf("%s", s);
-		if (strcmp(s, "") != 0)
-			free(s);
-		else
-			break ;
+		printf("%s", get_next_line(fd));
 	}
 	close(fd);
 	return (0);
