@@ -6,7 +6,7 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:41:34 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/08 22:43:46 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/09 11:14:33 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
+#  define BUFFER_SIZE 20
 # endif
 
 char	*ft_strchr(char *s, char c);
