@@ -6,113 +6,109 @@
 /*   By: juaherre <juaherre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 19:25:06 by juaherre          #+#    #+#             */
-/*   Updated: 2023/05/16 12:37:01 by juaherre         ###   ########.fr       */
+/*   Updated: 2023/05/20 12:03:18 by juaherre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
-static int	check_n(char *s, char c)
+static char	*no_break(char *whole_line)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
+	if (ft_strlen(whole_line) == 0)
 	{
-		if (s[i] == c)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static void	*ft_free(char *s)
-{
-	free(s);
-	return (NULL);
-}
-static char	*get_overline(int fd)
-{
-	char	*buf;
-	size_t	bytes;
-	char	*joined;
-
-	joined = "";
-	//joined = "";
-	bytes = 1;
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
-		ft_free(buf);
-	buf[0] = '\0';
-	if (bytes < 0)
-		ft_free(joined);
-	while (bytes > 0 && check_n(buf, '\n') == 0)
-	{
-		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes > 0)
-		{
-			buf[bytes] = '\0';
-			joined = ft_strjoin(joined, buf);
-		}
-	}
-	free(buf);
-	return (joined);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*remainder = NULL;
-	char		*s;
-	char		*line;
-	size_t		i;
-
-	if (!fd)
+		free(whole_line);
 		return (NULL);
-	s = get_overline(fd);
-	if (ft_strlen(remainder) > 0)
-		s = ft_strjoin(remainder, s);
-	i = 0;
-	remainder = ft_strchr(s, '\n') + 1;
-	line = (char *)malloc(sizeof(char) * (ft_strlen(s) - ft_strlen(remainder)));
-	if (ft_strlen(ft_strchr(s, '\n')) > 1)
-	{
-		while (i <= (ft_strlen(s) - ft_strlen(remainder)))
-		{
-			line[i] = s[i];
-			i++;
-		}
-		return (line);
 	}
-	return (s);
+	else
+		return (whole_line);
 }
 
+static char	*get_overline(char **line)
+{
+	char	*remainder;
+	char	*whole_line;
+	int		i;
 
-/*
+	i = 0;
+	if (*line == NULL)
+		return (NULL);
+	while ((*line)[i] != '\n' && (*line)[i])
+		i++;
+	if ((*line)[i] == '\n')
+	{
+		whole_line = ft_substr(*line, 0, i + 1);
+		remainder = ft_strdup(*line + (i + 1));
+		free(*line);
+		*line = remainder;
+		return (whole_line);
+	}
+	whole_line = ft_strdup(*line);
+	free(*line);
+	*line = NULL;
+	return (no_break(whole_line));
+}
+
+static char	*rnsend(int read_bytes, int fd, char *buffer, char **line)
+{
+	char	*temp;
+
+	while (read_bytes > 0)
+	{
+		buffer[read_bytes] = '\0';
+		if (*line == NULL)
+			*line = ft_strdup("");
+		temp = ft_strjoin(*line, buffer);
+		free(*line);
+		*line = temp;
+		if (ft_strchr(buffer, '\n'))
+			break ;
+		read_bytes = read(fd, buffer, BUFFER_SIZE);
+	}
+	free(buffer);
+	return (get_overline(line));
+}
+
 char	*get_next_line(int fd)
 {
-	char		*overline;
-	char		*line;
-	static char	*remainder;
-	char		*s;
-	int			fd;
+	char		*buffer;
+	static char	*line = NULL;
+	int			read_bytes;
 
-	remainder = "";
-	overline = get_overline(fd);
-	line = ft_trimmer(overline);
-	line = ft_strjoin(remainder, line);
-}*/
-#include <stdio.h>
-#include <string.h>
-
-int	main(void)
-{
-	int fd = open("text.txt", O_RDONLY);
-	//printf("%s", get_next_line(fd));
-	while (get_next_line(fd))
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buffer = (char *)malloc((BUFFER_SIZE + 1) * (sizeof(char)));
+	if (!buffer)
+		return (NULL);
+	read_bytes = read(fd, buffer, BUFFER_SIZE);
+	if (read_bytes < 0)
 	{
-		printf("%s", get_next_line(fd));
+		free(buffer);
+		free(line);
+		line = NULL;
+		return (NULL);
 	}
-	close(fd);
-	return (0);
+	return (rnsend(read_bytes, fd, buffer, &line));
 }
+
+/*#include <stdio.h>
+int	main()
+{
+	char	*line = NULL;
+	int		fd1;
+	fd1 = open("text1.txt", O_RDONLY);
+	//fd2 = open("text2.txt", O_RDONLY);
+	//fd3 = open("text3.txt", O_RDONLY);
+	if (fd1 == -1 )
+	{
+		printf("Error al abrir el archivo\n");
+		return (1);
+	}
+	while ((line = get_next_line(fd1)))
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd1);
+	system("leaks -q a.out");
+	return (0);
+}*/
