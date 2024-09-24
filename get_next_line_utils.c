@@ -6,7 +6,11 @@
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 12:05:29 by juanherr          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/09/24 14:00:25 by juanherr         ###   ########.fr       */
+=======
+/*   Updated: 2024/09/24 16:25:11 by juanherr         ###   ########.fr       */
+>>>>>>> cb26a45 (a)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +34,15 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
+<<<<<<< HEAD
+=======
+void	ft_putendl_fd(char *s, int fd)
+{
+	ft_putstr_fd(s, fd);
+	ft_putchar_fd('\n', fd);
+}
+
+>>>>>>> cb26a45 (a)
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
@@ -78,3 +91,50 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	dst[i] = '\0';
 	return (ft_strlen(src));
 }
+<<<<<<< HEAD
+=======
+
+char	*ft_strdup(const char *s)
+{
+	size_t	i;
+	char	*str;
+
+	i = 0;
+	str = (char *)malloc(ft_strlen(s) + 1);
+	if (!str)
+		return (NULL);
+	while (s[i])
+	{
+		str[i] = s[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*sub;
+	size_t	i;
+	size_t	strlen;
+
+	if (!s)
+		return (NULL);
+	strlen = ft_strlen(s);
+	i = 0;
+	if (start >= strlen)
+		return (ft_strdup(""));
+	if (len > strlen - start)
+		len = strlen - start;
+	sub = (char *)malloc(len + 1);
+	if (!sub)
+		return (NULL);
+	while (i < len)
+	{
+		sub[i] = s[start + i];
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
+}
+>>>>>>> cb26a45 (a)
