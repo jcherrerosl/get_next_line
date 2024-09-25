@@ -6,11 +6,7 @@
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 12:05:29 by juanherr          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/09/24 14:00:25 by juanherr         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/24 16:25:11 by juanherr         ###   ########.fr       */
->>>>>>> cb26a45 (a)
+/*   Updated: 2024/09/25 15:46:42 by juanherr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +30,24 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
-<<<<<<< HEAD
-=======
+char	*ft_strchr(const char *s, int c)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != (char)c && s[i])
+		i++;
+	if (s[i] == (char)c)
+		return ((char *)(s + i));
+	return (NULL);
+}
+
 void	ft_putendl_fd(char *s, int fd)
 {
 	ft_putstr_fd(s, fd);
 	ft_putchar_fd('\n', fd);
 }
 
->>>>>>> cb26a45 (a)
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
@@ -52,6 +57,24 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
+char	*ft_strndup(const char *s, size_t n)
+{
+	size_t	i;
+	char	*dup;
+
+	i = 0;
+	dup = (char *)malloc((n + 1) * sizeof(char));
+	if (!dup)
+		return (NULL);
+	while (s[i] && i < n)
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}
+
 
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
@@ -91,8 +114,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	dst[i] = '\0';
 	return (ft_strlen(src));
 }
-<<<<<<< HEAD
-=======
 
 char	*ft_strdup(const char *s)
 {
@@ -137,4 +158,28 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	sub[i] = '\0';
 	return (sub);
 }
->>>>>>> cb26a45 (a)
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*final;
+	size_t	i;
+	size_t	j;
+
+	final = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!final)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s1[i])
+	{
+		final[i] = s1[i];
+		i++;
+	}
+	while (s2[j])
+	{
+		final[i] = s2[j];
+		i++;
+		j++;
+	}
+	final[i] = '\0';
+	return (final);
+}

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-hola como esta usted hehe
-=======
 hola muy buenas que tal estas uwu uwu
->>>>>>> cb26a45 (a)
 esto
 es
 una
