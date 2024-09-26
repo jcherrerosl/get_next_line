@@ -68,8 +68,8 @@ char	*get_next_line(int fd)
 
 int	main(void)
 {
-	int			fd;
-	char        *line;
+	int	fd;
+	char	*line;
 	
 	fd = open("texto.txt", O_RDONLY);
 	line = get_next_line(fd);
