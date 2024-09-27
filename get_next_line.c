@@ -6,11 +6,13 @@
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 12:04:35 by juanherr          #+#    #+#             */
-/*   Updated: 2024/09/26 18:16:52 by juanherr         ###   ########.fr       */
+/*   Updated: 2024/09/27 16:37:02 by juanherr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static char *
 
 char	*get_next_line(int fd)
 {
@@ -23,21 +25,18 @@ char	*get_next_line(int fd)
 	char		*out;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-	{
-
 		return (NULL);
-	}
 	buffer = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 	{
-//		printf("%ld\n", BUFFER_SIZE);
 		return (NULL);
 	}
-//	line = NULL;
 	readbytes = read(fd, buffer, BUFFER_SIZE);
 	if (readbytes < 0)
 	{
 		free (buffer);
+		free (line);
+		line = NULL;
 		return (NULL);
 	}
 	while (readbytes > 0)
@@ -48,7 +47,6 @@ char	*get_next_line(int fd)
 		aux = ft_strjoin(line, buffer);
 		free(line);
 		line = aux;
-//		free(aux);
 		if (ft_strchr(line, '\n'))
 			break ;
 		readbytes = read(fd, buffer, BUFFER_SIZE);
@@ -56,9 +54,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	i = 0;
 	if (!line)
-	{
-		line = ft_strdup("");
-	}
+		return (NULL);
 	while (line[i] && line[i] != '\n')
 		i++;
 	if (line[i] == '\n')
@@ -67,7 +63,6 @@ char	*get_next_line(int fd)
 		leftover = ft_strdup(line + i + 1);
 		free (line);
 		line = leftover;
-		//free (leftover);
 		return (out);
 	}
 	out = ft_strdup(line);
@@ -81,14 +76,14 @@ char	*get_next_line(int fd)
 	return (out);
 }
 
-/*
+
 int	main(void)
 {
 	int	fd;
 	char *line;
 	size_t	i = 0;
 	
-	fd = open("texto.txt", O_RDONLY);
+	fd = open("1char.txt", O_RDONLY);
 	line = get_next_line(fd);
 	
 	//ft_putstr_fd(line, 1);
@@ -109,4 +104,3 @@ int	main(void)
 	close(fd);
 	return (0);
 }
-*/
