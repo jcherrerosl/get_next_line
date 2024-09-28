@@ -5,129 +5,121 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/24 12:04:35 by juanherr          #+#    #+#             */
-/*   Updated: 2024/09/27 18:39:29 by juanherr         ###   ########.fr       */
+/*   Created: 2024/09/28 20:09:20 by juanherr          #+#    #+#             */
+/*   Updated: 2024/09/28 20:33:55 by juanherr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*free_and_null(char **ptr)
+static char	*ft_free(char *ptr)
 {
-	if (*ptr)
+	if (ptr)
 	{
-		free(*ptr);
-		*ptr = NULL;
+		free(ptr);
+		ptr = NULL;
 	}
 	return (NULL);
 }
 
-static char	*check_end(char *out)
+static char	*check_end(char *line)
 {
-	if (ft_strlen(out) == 0)
+	if (!line)
+		return (NULL);
+	if (ft_strlen(line) == 0)
 	{
-		free(out);
+		free(line);
 		return (NULL);
 	}
 	else
-		return (out);
+		return (line);
 }
 
-static char	*line_leftover(char **line)
+static char	*obtain_line(char **overline)
 {
 	char	*leftover;
-	char	*out;
-	int		i;
+	char	*line;
+	size_t	i;
 
-	i = 0;
-	if (*line == NULL)
+	if (!*overline)
 		return (NULL);
-	while ((*line)[i] != '\n' && (*line)[i])
+	i = 0;
+	while ((*overline)[i] && (*overline)[i] != '\n')
 		i++;
-	if ((*line)[i] == '\n')
+	if ((*overline)[i] == '\n')
 	{
-		out = ft_substr(*line, 0, i + 1);
-		leftover = ft_strdup(*line + (i + 1));
-		if (!out || !leftover)
-			return (free_and_null(line));
-		free(*line);
-		*line = leftover;
-		return (out);
+		line = ft_substr(*overline, 0, i + 1);
+		leftover = ft_strdup(*overline + i + 1);
+		if (!leftover || !line)
+			return (ft_free(*overline));
+		free(*overline);
+		*overline = leftover;
+		return (line);
 	}
-	out = ft_strdup(*line);
-	free(*line);
-	*line = NULL;
-	return (check_end(out));
+	line = ft_strdup(*overline);
+	free(*overline);
+	*overline = NULL;
+	return (check_end(line));
 }
 
-static char	*reading(int read_bytes, int fd, char *buffer, char **line)
+static void	get_overline(int fd, char *buffer, char **overline)
 {
 	char	*aux;
+	ssize_t	readbytes;
 
-	while (read_bytes > 0)
+	readbytes = read(fd, buffer, BUFFER_SIZE);
+	if (readbytes < 0)
 	{
-		buffer[read_bytes] = '\0';
-		if (*line == NULL)
-			*line = ft_strdup("");
-		aux = ft_strjoin(*line, buffer);
-		free(*line);
-		*line = aux;
+		ft_free(buffer);
+		return ;
+	}
+	buffer[readbytes] = '\0';
+	while (readbytes > 0)
+	{
+		if (!*overline)
+			*overline = ft_strdup("");
+		if (!*overline)
+			return ;
+		aux = ft_strjoin(*overline, buffer);
+		free(*overline);
+		*overline = aux;
 		if (ft_strchr(buffer, '\n'))
 			break ;
-		read_bytes = read(fd, buffer, BUFFER_SIZE);
+		readbytes = read(fd, buffer, BUFFER_SIZE);
+		buffer[readbytes] = '\0';
 	}
 	free(buffer);
-	return (line_leftover(line));
 }
 
 char	*get_next_line(int fd)
 {
+	char		*line;
 	char		*buffer;
-	static char	*line;
-	int			read_bytes;
+	static char	*overline;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
-	read_bytes = read(fd, buffer, BUFFER_SIZE);
-	if (read_bytes < 0)
-	{
-		free(buffer);
-		free(line);
-		line = NULL;
-		return (NULL);
-	}
-	return (reading(read_bytes, fd, buffer, &line));
+	get_overline(fd, buffer, &overline);
+	line = obtain_line(&overline);
+	return (line);
 }
 
-/*
-int	main(void)
-{
-	int	fd;
-	char *line;
-	size_t	i = 0;
-	
-	fd = open("1char.txt", O_RDONLY);
-	line = get_next_line(fd);
-	
-	//ft_putstr_fd(line, 1);
-	
-	//while (i < 3)
-	//{
-	//	printf("%s", line);
-	//	i++;
-	//	line = get_next_line(fd);
-	//}
-	
-	while (line)
-	{
-		printf("%s", line);
-		free (line);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (0);
-}
-*/
+//int	main(void)
+//{
+//	int		fd;
+//	char	*line;
+
+//	fd = open("1char.txt", O_RDONLY);
+//	line = get_next_line(fd);
+//	while (line)
+//	{
+//		printf("%s", line);
+//		free (line);
+//		line = get_next_line(fd);
+//	}
+//	close(fd);
+//	return (0);
+//}
