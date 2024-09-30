@@ -6,7 +6,7 @@
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:09:20 by juanherr          #+#    #+#             */
-/*   Updated: 2024/09/28 20:33:55 by juanherr         ###   ########.fr       */
+/*   Updated: 2024/09/30 15:16:27 by juanherr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,14 @@ static char	*obtain_line(char **overline)
 	return (check_end(line));
 }
 
-static void	get_overline(int fd, char *buffer, char **overline)
+static void	get_overline(int fd, char *buffer, size_t bytes, char **overline)
 {
 	char	*aux;
-	ssize_t	readbytes;
 
-	readbytes = read(fd, buffer, BUFFER_SIZE);
-	if (readbytes < 0)
+	buffer[bytes] = '\0';
+	while (bytes > 0)
 	{
-		ft_free(buffer);
-		return ;
-	}
-	buffer[readbytes] = '\0';
-	while (readbytes > 0)
-	{
+		buffer[bytes] = '\0';
 		if (!*overline)
 			*overline = ft_strdup("");
 		if (!*overline)
@@ -85,8 +79,7 @@ static void	get_overline(int fd, char *buffer, char **overline)
 		*overline = aux;
 		if (ft_strchr(buffer, '\n'))
 			break ;
-		readbytes = read(fd, buffer, BUFFER_SIZE);
-		buffer[readbytes] = '\0';
+		bytes = read(fd, buffer, BUFFER_SIZE);
 	}
 	free(buffer);
 }
@@ -96,13 +89,22 @@ char	*get_next_line(int fd)
 	char		*line;
 	char		*buffer;
 	static char	*overline;
+	ssize_t		readbytes;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
-	get_overline(fd, buffer, &overline);
+	readbytes = read(fd, buffer, BUFFER_SIZE);
+	if (readbytes < 0)
+	{
+		ft_free(buffer);
+		ft_free(overline);
+		overline = NULL;
+		return (NULL);
+	}
+	get_overline(fd, buffer, readbytes, &overline);
 	line = obtain_line(&overline);
 	return (line);
 }
