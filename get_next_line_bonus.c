@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: juanherr <juanherr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:09:20 by juanherr          #+#    #+#             */
-/*   Updated: 2024/09/30 18:04:17 by juanherr         ###   ########.fr       */
+/*   Updated: 2024/10/10 13:30:30 by juanherr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_free(char *ptr)
 {
@@ -88,7 +88,7 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	char		*buffer;
-	static char	*overline = NULL;
+	static char	*overline[4096];
 	ssize_t		readbytes;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -100,12 +100,12 @@ char	*get_next_line(int fd)
 	if (readbytes < 0)
 	{
 		ft_free(buffer);
-		ft_free(overline);
-		overline = NULL;
+		ft_free(overline[fd]);
+		overline[fd] = NULL;
 		return (NULL);
 	}
-	get_overline(fd, buffer, readbytes, &overline);
-	line = obtain_line(&overline);
+	get_overline(fd, buffer, readbytes, &overline[fd]);
+	line = obtain_line(&overline[fd]);
 	return (line);
 }
 
