@@ -3,15 +3,15 @@
 ![get_next_line Grade](https://github.com/ayogun/42-project-badges/raw/main/badges/get_next_linem.png)
 
 ## Español
-El proyecto **get_next_line** consiste en crear una función en C que lea una línea de un archivo descriptor a la vez, facilitando la manipulación de archivos de texto o entradas estándar en programas.
+El proyecto **get_next_line** consiste en crear una función en C que lea una línea de un _file descriptor_ a la vez, facilitando la manipulación de archivos de texto o entradas estándar en programas.
 
 ### Características
 - Lee una línea completa por cada llamada a `get_next_line`.
-- Soporta múltiples descriptores de archivos simultáneamente.
+- Soporta múltiples _file descriptors_ simultáneamente.
 - Gestión eficiente de la memoria para evitar fugas.
 
 ### Requisitos del sistema
-- `gcc`
+- `cc`
 - `make`
 
 ### Instrucciones de uso
@@ -31,7 +31,7 @@ The **get_next_line** project involves creating a function in C that reads one l
 - Efficient memory management to prevent leaks.
 
 ### System requirements
-- `gcc`
+- `cc`
 - `make`
 
 ### Usage instructions
